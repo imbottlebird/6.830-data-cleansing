@@ -19,29 +19,18 @@ st.set_page_config(
     page_icon=None,  # String, anything supported by st.image, or None.
 )
 
-hide_streamlit_style = """
-<style>
-#MainMenu {visibility: hidden;}
-footer {visibility: hidden;}
-</style>
+# hide_streamlit_style = """
+# <style>
+# #MainMenu {visibility: hidden;}
+# footer {visibility: hidden;}
+# </style>
 
-"""
-st.markdown(hide_streamlit_style, unsafe_allow_html=True) 
+# """
+# st.markdown(hide_streamlit_style, unsafe_allow_html=True) 
 
 # ===========================================
 # Data load functions
 # ===========================================
-
-@st.cache(allow_output_mutation=True)
-def getDataFromCSV(file) -> pd.DataFrame:
-    dataFrame = pd.read_csv(file, sep=",", decimal=".",
-                     encoding="UTF-8", 
-                     index_col=0,
-                     low_memory=False)
-    dataFrame.index = np.arange(1, len(dataFrame) + 1)#pd.to_datetime(dataFrame.index, format='%Y-%m-%d %H:%M:%S')
-    #dataFrame = dataFrame.sort_index(ascending=True)
-    dataFrame = dataFrame.apply(pd.to_numeric, errors='coerce')
-    return dataFrame
 
 import os
 import base64
