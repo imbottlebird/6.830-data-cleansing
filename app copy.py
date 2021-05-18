@@ -19,7 +19,6 @@ st.set_page_config(
     page_icon=None,  # String, anything supported by st.image, or None.
 )
 
-
 # ===========================================
 # Data load functions
 # ===========================================
@@ -73,8 +72,10 @@ def main():
             \n1. Data Upload
             \n2. Check for/Generate Missing Data
             \n3. Model Performance Test (with a small portion of data)
-            \n4. Data Imputation/Evaluation
-            \n5. Data Download
+            \n4. Model Selection
+            \n5. Data Imputation
+            \n6. Model Evaluation
+            \n7. Data Download
         """
     )
     state = ss._get_state()
@@ -138,8 +139,8 @@ def main():
         missing_is = [1,3]
         df = add_missing_values(df, missing_is, 0.2)
         df_mv = df.copy()
-        st.text("Missing data generated successfully!")
         st.dataframe(df)
+        #st.markdown('**Missing values information**')
         dfInfo = pd.DataFrame()
         dfInfo["Types"] = df.dtypes
         dfInfo["Missing Values"] = df.isnull().sum()
@@ -148,9 +149,9 @@ def main():
 
     ###### PERFORMANCE TEST ######
     if not df.empty:
-        st.title("3. Model Performance Test")
+        st.title("Model Performance Testing")
 
-        st.write("Preliminary Analysis on the Imputation Model Performance. Select the percentage of data you want to test the model with.")
+        st.write("Preliminary Analysis on the Imputation Model Performance. Evaluate accuracy scores based on a small chunk of data to save time.")
         input_perc = st.number_input('Percentage of data',0.0,1.0,0.2)
         #st.write('The current number is ', debt_level)
         
@@ -162,24 +163,20 @@ def main():
 
         if (TestModel):
             perc = int(len(df)*input_perc)
-            df_impute, acc, score_dict, time_dict = impute_missing_values(df[:perc], missing_is)
+            df_impute, acc, score_dict = impute_missing_values(df[:perc], missing_is)
             if score_dict['Logistic'] == 1:
                 st.markdown('This is a **Classification Task**')
             else:
                 st.markdown('This is a **Regression Task**')
-            ds = [score_dict, time_dict]
-            d = {}
-            for k in score_dict.keys():
-                d[k] = tuple(d[k] for d in ds)
-            st.table(pd.DataFrame(d,index=['Accuracy','Time']))
+            st.table(pd.DataFrame(score_dict,index=['Accuracy']))
             st.dataframe(df_impute)
 
         ###### DATA IMPUTATION ######
-        #### Imputation ####
-        st.title("4. Data Imputation/Evaluation")
+        st.title("Data Imputation")
+
         mod_option = st.selectbox(
-        'Select your imputation model: (Only Automatic option is available at the moment.)',
-        ('Please select the model','Linear Regression', 'Logistic Regression', 'Random Forest', 'Automatic'))
+        'Select your imputation model: (Only Automatic option is available.)',
+        ('Please select the data','Linear Regression', 'Logistic Regression', 'Random Forest', 'Automatic'))
         if mod_option == 'Linear Regression':
             # df = pd.read_csv('data/abalone.csv')
             # st.text("Abalone Data loaded successfully!")
@@ -197,22 +194,21 @@ def main():
             st.text("Currently only Automatic option is available.")
         elif mod_option == 'Automatic':
             st.text("Automatic imputation completed!")
-            df_impute, acc, score_dict, time_dict= impute_missing_values(df_mv, missing_is)
-            ds = [score_dict, time_dict]
-            d = {}
-            for k in score_dict.keys():
-                d[k] = tuple(d[k] for d in ds)
-            st.table(pd.DataFrame(d,index=['Accuracy','Time']))
+            df_impute, acc, score_dict = impute_missing_values(df_mv, missing_is)
+            st.table(pd.DataFrame(score_dict,index=['Accuracy']))
             st.write(max(score_dict), 'was selected to impute the missing data!')
             st.dataframe(df_impute)
+            
 
-        #### FILE DOWNLOAD ####
-        st.title("5. Data Download")
-        if st.button('Download the imputed data as CSV'):
-            tmp_download_link = download_link(df, 'imputed_data.csv', 'Click here to download your data!')
-            st.markdown(tmp_download_link, unsafe_allow_html=True)
+        if mod_option != []:
 
-
+            st.markdown("------------------------------------------")
+            st.markdown("DOWNLOAD YOUR DATA")
+                #### FILE DOWNLOAD #####
+            # Examples
+            if st.button('Download Dataframe as CSV'):
+                tmp_download_link = download_link(df, 'YOUR_DF.csv', 'Click here to download your data!')
+                st.markdown(tmp_download_link, unsafe_allow_html=True)
 
 if __name__ == "__main__":
     main()
