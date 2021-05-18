@@ -171,7 +171,7 @@ def main():
         if (TestModel):
             perc = int(len(df)*input_perc)
             df_impute, acc, score_dict, time_dict = impute_missing_values(df[:perc], missing_is)
-            if score_dict['Logistic'] == 1:
+            if score_dict['Logistic'] != 0:
                 st.markdown('This is a **Classification Task**')
             else:
                 st.markdown('This is a **Regression Task**')
@@ -204,14 +204,15 @@ def main():
             # st.dataframe(df)
             st.text("Currently only Automatic option is available.")
         elif mod_option == 'Automatic':
-            st.text("Automatic imputation completed!")
+            st.text("Imputing the missing values..")
             df_impute, acc, score_dict, time_dict= impute_missing_values(df_mv, missing_is)
             ds = [score_dict, time_dict]
             d = {}
             for k in score_dict.keys():
                 d[k] = tuple(d[k] for d in ds)
+            st.text("Automatic imputation completed!")
             st.table(pd.DataFrame(d,index=['Accuracy','Time']))
-            st.write(max(score_dict), 'was selected to impute the missing data!')
+            st.write(max(score_dict, key=score_dict.get), 'was selected to impute the missing data!')
             st.dataframe(df_impute)
 
         #### FILE DOWNLOAD ####
