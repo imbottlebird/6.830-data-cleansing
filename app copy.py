@@ -7,6 +7,8 @@ import numpy as np
 import datetime
 import defSessionState as ss
 import random
+import os
+import base64
 
 from utils import *
 
@@ -18,6 +20,14 @@ st.set_page_config(
     page_title="MIT 6.830 Final Project",
     page_icon=None,  # String, anything supported by st.image, or None.
 )
+# hide_streamlit_style = """
+# <style>
+# #MainMenu {visibility: hidden;}
+# footer {visibility: hidden;}
+# </style>
+
+# """
+# st.markdown(hide_streamlit_style, unsafe_allow_html=True) 
 
 # ===========================================
 # Data load functions
@@ -33,9 +43,6 @@ def getDataFromCSV(file) -> pd.DataFrame:
     #dataFrame = dataFrame.sort_index(ascending=True)
     dataFrame = dataFrame.apply(pd.to_numeric, errors='coerce')
     return dataFrame
-
-import os
-import base64
 
 def download_link(object_to_download, download_filename, download_link_text):
     """
@@ -64,7 +71,7 @@ def main():
     st.markdown(
         "**By ByeongJo Kong, Kristin YiJie Chen, Ming Da Li**")
     st.markdown(
-        "Please upload your CSV file.")
+        "Spring 2021")
 
     st.info(
         """

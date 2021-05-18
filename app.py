@@ -19,6 +19,14 @@ st.set_page_config(
     page_icon=None,  # String, anything supported by st.image, or None.
 )
 
+hide_streamlit_style = """
+<style>
+#MainMenu {visibility: hidden;}
+footer {visibility: hidden;}
+</style>
+
+"""
+st.markdown(hide_streamlit_style, unsafe_allow_html=True) 
 
 # ===========================================
 # Data load functions
@@ -65,22 +73,22 @@ def main():
     st.markdown(
         "**By ByeongJo Kong, Kristin YiJie Chen, Ming Da Li**")
     st.markdown(
-        "Please upload your CSV file.")
+        "Spring 2021")
 
     st.info(
         """
-        \nSteps of Data Imputation:
-            \n1. Data Upload
-            \n2. Check for/Generate Missing Data
+        \nData Imputation Process:
+            \n1. Upload or Select Data
+            \n2. Data Exploration (Scan or Generate Missing Values)
             \n3. Model Performance Test (with a small portion of data)
-            \n4. Data Imputation/Evaluation
+            \n4. Data Imputation and Evaluation
             \n5. Data Download
         """
     )
     state = ss._get_state()
 
     ###### DATA UPLOAD #######
-    st.title("1. Data Upload")
+    st.title("1. Data Upload/Selection")
     uploaded_file = st.file_uploader(
         "Upload your CSV file here",
         type="csv",
@@ -112,7 +120,7 @@ def main():
         st.dataframe(df)
 
     ###### CHECK MISSING DATA #######
-    st.title("2. Check for/Generate Missing Data")
+    st.title("2. Data Exploration")
     #check for missing values
     checkMissingData = st.checkbox(
                 label='Check for missing values',
@@ -176,7 +184,7 @@ def main():
 
         ###### DATA IMPUTATION ######
         #### Imputation ####
-        st.title("4. Data Imputation/Evaluation")
+        st.title("4. Data Imputation and Evaluation")
         mod_option = st.selectbox(
         'Select your imputation model: (Only Automatic option is available at the moment.)',
         ('Please select the model','Linear Regression', 'Logistic Regression', 'Random Forest', 'Automatic'))
