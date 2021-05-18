@@ -129,10 +129,9 @@ def main():
                 label='Generate random missing values (2 columns)',
                 value=False,
                 key='addMissingData')
-
+    missing_is = [1,3]
     if (addMissingData):
         #missing_is = random.sample(range(len(df.iloc[1])), 2)
-        missing_is = [1,3]
         df = add_missing_values(df, missing_is, 0.2)
         df_mv = df.copy()
         st.text("Missing data generated successfully!")
@@ -172,7 +171,6 @@ def main():
             st.dataframe(df_impute)
 
         ###### DATA IMPUTATION ######
-        #### Imputation ####
         st.title("4. Data Imputation and Evaluation")
         mod_option = st.selectbox(
         'Select your imputation model: (Only Automatic option is available at the moment.)',
