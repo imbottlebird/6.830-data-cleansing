@@ -7,6 +7,7 @@ import numpy as np
 import datetime
 import defSessionState as ss
 import random
+import sklearn
 
 from utils import *
 
@@ -126,15 +127,18 @@ def main():
 
     #adding missing values
     addMissingData = st.checkbox(
-                label='Generate random missing values (2 columns)',
+                label='Generate missing values in 2 columns',
                 value=False,
                 key='addMissingData')
-    missing_is = [1,3]
+    
+    #missing_is = random.sample(range(len(df.iloc[0])),2)
+    missing_is = [1,4]
     if (addMissingData):
         #missing_is = random.sample(range(len(df.iloc[1])), 2)
         df = add_missing_values(df, missing_is, 0.2)
         df_mv = df.copy()
         st.text("Missing data generated successfully!")
+        
         st.dataframe(df)
         dfInfo = pd.DataFrame()
         dfInfo["Types"] = df.dtypes
@@ -158,16 +162,34 @@ def main():
 
         if (TestModel):
             perc = int(len(df)*input_perc)
-            df_impute, acc, score_dict, time_dict = impute_missing_values(df[:perc], missing_is)
-            if score_dict['Logistic'] != 0:
-                st.markdown('This is a **Classification Task**')
+            df_impute, acc, score_dict, time_dict, t_types = impute_missing_values(df[:perc], missing_is)
+
+            st.markdown("**The best order of imputation:**")
+            st.write('Column ', acc['best imputation order'][0]+1, ', Column ',acc['best imputation order'][1]+1)
+
+            st.markdown("**Types of task conducted:**")
+            if (type(acc['best imputation model'][0]) == sklearn.linear_model._base.LinearRegression or type(acc['best imputation model'][0]) == sklearn.ensemble._forest.RandomForestRegressor):
+                st.write('Column ', acc['best imputation order'][0]+1, ': Regression task')
             else:
-                st.markdown('This is a **Regression Task**')
+                st.write('Column ', acc['best imputation order'][0]+1, ': Classification task')
+
+            if (type(acc['best imputation model'][1]) == sklearn.linear_model._base.LinearRegression or type(acc['best imputation model'][1]) == sklearn.ensemble._forest.RandomForestRegressor):
+                st.write('Column ', acc['best imputation order'][1]+1, ': Regression task')
+            else:
+                st.write('Column ', acc['best imputation order'][1]+1, ': Classification task')
+                
+            # st.write('Column ', acc['best imputation order'][0], ': ',acc['best imputation model'][0])
+            # st.write('Column ', acc['best imputation order'][1], ': ',acc['best imputation model'][1])
+
+            # if score_dict['Logistic'] != 0:
+            #     st.markdown('This is a **Classification Task**')
+            # else:
+            #     st.markdown('This is a **Regression Task**')
             ds = [score_dict, time_dict]
             d = {}
             for k in score_dict.keys():
                 d[k] = tuple(d[k] for d in ds)
-            st.table(pd.DataFrame(d,index=['Accuracy','Time']))
+            st.table(pd.DataFrame(d,index=['Mean Accuracy','Time']))
             st.dataframe(df_impute)
 
         ###### DATA IMPUTATION ######
@@ -191,15 +213,33 @@ def main():
             # st.dataframe(df)
             st.text("Currently only Automatic option is available.")
         elif mod_option == 'Automatic':
-            st.text("Imputing the missing values..")
-            df_impute, acc, score_dict, time_dict= impute_missing_values(df_mv, missing_is)
+            data_load_state2 = st.text('Imputing the missing values..')
+            # st.text("Imputing the missing values..")
+            df_impute, acc, score_dict, time_dict, t_types = impute_missing_values(df, missing_is)
+            # st.write(max(score_dict, key=score_dict.get), 'was selected to impute the missing data!')
+            
+            st.markdown("**The best order of imputation:**")
+            st.write('Column ', acc['best imputation order'][0]+1, ', Column ',acc['best imputation order'][1]+1)
+
+            st.markdown("**Model Recommendation**")
+            if (type(acc['best imputation model'][0]) == sklearn.linear_model._base.LinearRegression or type(acc['best imputation model'][0]) == sklearn.ensemble._forest.RandomForestRegressor):
+                st.write('Column ', acc['best imputation order'][0]+1, '(Regression task) :', acc['best imputation model'][0])
+            else:
+                st.write('Column ', acc['best imputation order'][0]+1, '(Classification task) :', acc['best imputation model'][0])
+
+            if (type(acc['best imputation model'][1]) == sklearn.linear_model._base.LinearRegression or type(acc['best imputation model'][1]) == sklearn.ensemble._forest.RandomForestRegressor):
+                st.write('Column ', acc['best imputation order'][1]+1, '(Regression task) :', acc['best imputation model'][1])
+            else:
+                st.write('Column ', acc['best imputation order'][1]+1, '(Classification task) :', acc['best imputation model'][1])
+            
             ds = [score_dict, time_dict]
             d = {}
             for k in score_dict.keys():
                 d[k] = tuple(d[k] for d in ds)
-            st.text("Automatic imputation completed!")
-            st.table(pd.DataFrame(d,index=['Accuracy','Time']))
-            st.write(max(score_dict, key=score_dict.get), 'was selected to impute the missing data!')
+            data_load_state2.text("Data loaded successfully!")
+            # st.text("Automatic imputation completed!")
+            st.table(pd.DataFrame(d,index=['Mean Accuracy','Time']))
+            st.text("Missing values are imputed based on the recommended setting!")
             st.dataframe(df_impute)
 
         #### FILE DOWNLOAD ####

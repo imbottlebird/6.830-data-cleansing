@@ -231,6 +231,7 @@ def impute_missing_values(df, missing_is):
     mod =''
     score_reg = []
     score_rf = []
+    t_types = []
     for i in range(len(best_order)):
 
         val = best_order[i]
@@ -249,6 +250,7 @@ def impute_missing_values(df, missing_is):
         #print(model1)
         # model2 is either a linear regression or a logisti regression
         model2, metric2, is_regr2, mod = return_appropriate_model_and_metric_2(df, col)
+        t_types.append(mod)
 
         y_train_s = y_train[col]
         #print(y_train_s)
@@ -262,7 +264,7 @@ def impute_missing_values(df, missing_is):
         model1.fit(x_train, y_train_s)
         y_pred = model1.predict(x_test)
         score = round(metric(y_test_s, y_pred), 4)
-        score_reg.append(score)
+        score_rf.append(score)
         stop = timeit.default_timer()
         time_dict['RandomForest'] = stop-start
         
@@ -270,9 +272,10 @@ def impute_missing_values(df, missing_is):
         model2.fit(x_train, y_train_s)
         y_pred2 = model2.predict(x_test)
         score2 = round(metric(y_test_s, y_pred2), 4)
-        score_rf.append(score2)
+        score_reg.append(score2)
         stop = timeit.default_timer()
         time_dict[mod] = stop-start
+        score_dict[mod] = score2
 
         
         #### KNN ####
@@ -306,6 +309,8 @@ def impute_missing_values(df, missing_is):
             inverse_label_imputation = reverse_label(df, col, imputation)
             df.iloc[df.index[df[col].isna()], val] = inverse_label_imputation
             # do in place imputation here
+            
+            t_types.append('Random Forest')
         else:
             my_dict["best imputation model"].append(model2)
             my_dict["mean imputation score"] += score2
@@ -317,6 +322,8 @@ def impute_missing_values(df, missing_is):
             inverse_label_imputation = reverse_label(df, col, imputation)
             df.iloc[df.index[df[col].isna()], val] = inverse_label_imputation
             # do in place imputation here
+            
+            t_types.append(mod)
 
         x_train = pd.concat([x_train, y_train_s], axis=1)
 
@@ -337,12 +344,11 @@ def impute_missing_values(df, missing_is):
         x_impute = x_impute[reorder_cols]
 
     score_dict["RandomForest"] = sum(score_rf)/len(best_order)
-    score_dict[mod] = sum(score_reg)/len(best_order)
 
     my_dict["mean imputation score"] = round(my_dict["mean imputation score"] / len(best_order), 4)
 
 
-    return df, my_dict, score_dict, time_dict
+    return df, my_dict, score_dict, time_dict, t_types
 
 
 # def linear(df, col, grd_srch=False):
