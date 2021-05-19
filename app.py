@@ -88,7 +88,7 @@ def main():
     leng = 0
     option = st.selectbox(
     'Or select an example data:',
-    ('Please select the data','Abalone', 'Diamonds', 'Iris'))
+    ('Please select the data','Abalone', 'Diamonds'))
     if option == 'Abalone':
         df = pd.read_csv('data/abalone.csv')
         st.text("Abalone Data loaded successfully!")
@@ -97,10 +97,10 @@ def main():
         df = pd.read_csv('data/diamonds.csv')
         st.text("Diamonds Data loaded successfully!")
         st.dataframe(df)
-    elif option == 'Iris':
-        df = pd.read_csv('data/iris_data.csv')
-        st.text("Iris Data loaded successfully!")
-        st.dataframe(df)
+    # elif option == 'Iris':
+    #     df = pd.read_csv('data/iris_data.csv')
+    #     st.text("Iris Data loaded successfully!")
+    #     st.dataframe(df)
     
     if uploaded_file:
         data_load_state = st.text('Loading Data...')
@@ -162,7 +162,7 @@ def main():
 
         if (TestModel):
             perc = int(len(df)*input_perc)
-            df_impute, acc, score_dict, time_dict, t_types = impute_missing_values(df[:perc], missing_is)
+            df_impute, acc, score_dict, time_dict = impute_missing_values(df[:perc], missing_is)
 
             st.markdown("**The best order of imputation:**")
             st.write('Column ', acc['best imputation order'][0]+1, ', Column ',acc['best imputation order'][1]+1)
@@ -215,7 +215,7 @@ def main():
         elif mod_option == 'Automatic':
             data_load_state2 = st.text('Imputing the missing values..')
             # st.text("Imputing the missing values..")
-            df_impute, acc, score_dict, time_dict, t_types = impute_missing_values(df, missing_is)
+            df_impute, acc, score_dict, time_dict = impute_missing_values(df, missing_is)
             # st.write(max(score_dict, key=score_dict.get), 'was selected to impute the missing data!')
             
             st.markdown("**The best order of imputation:**")

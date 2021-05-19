@@ -9,7 +9,6 @@ from sklearn.linear_model import LinearRegression, LogisticRegression
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import r2_score
 from sklearn.model_selection import KFold, GridSearchCV
-from sklearn.impute import KNNImputer
 import timeit
 import csv
 import matplotlib.pyplot as plt
@@ -143,25 +142,6 @@ def get_train_test_data_m(df, org_df, col):  # col is column name in string
     df_test = org_df.iloc[missing_indices]
     x_test, y_test = x_y_split_m(df_test, col)
     return x_train, y_train, x_test, y_test
-
-def deeplearning(x_train, y_train):
-    imputer = datawig.SimpleImputer(
-        input_columns=['sepal length','sepal width','petal width','class'], # column(s) containing information about the column we want to impute
-        output_column='petal length', # the column we'd like to impute values for
-        #output_path = 'imputer_model', # stores model data and metrics
-        )
-
-    #hyperparameter opimization for numerical data
-    imputer.fit_hpo(
-        train_df=df_train,
-        num_epochs=10,
-        learning_rate_candidates=[1e-3, 1e-4],
-        final_fc_hidden_units=[[100]]
-    )
-    #Fit an imputer model on the train data
-    imputer.fit(train_df=df_train)
-
-    return imputer
 
 
 
@@ -309,8 +289,6 @@ def impute_missing_values(df, missing_is):
             inverse_label_imputation = reverse_label(df, col, imputation)
             df.iloc[df.index[df[col].isna()], val] = inverse_label_imputation
             # do in place imputation here
-            
-            t_types.append('Random Forest')
         else:
             my_dict["best imputation model"].append(model2)
             my_dict["mean imputation score"] += score2
@@ -322,8 +300,6 @@ def impute_missing_values(df, missing_is):
             inverse_label_imputation = reverse_label(df, col, imputation)
             df.iloc[df.index[df[col].isna()], val] = inverse_label_imputation
             # do in place imputation here
-            
-            t_types.append(mod)
 
         x_train = pd.concat([x_train, y_train_s], axis=1)
 
@@ -348,7 +324,7 @@ def impute_missing_values(df, missing_is):
     my_dict["mean imputation score"] = round(my_dict["mean imputation score"] / len(best_order), 4)
 
 
-    return df, my_dict, score_dict, time_dict, t_types
+    return df, my_dict, score_dict, time_dict
 
 
 # def linear(df, col, grd_srch=False):
