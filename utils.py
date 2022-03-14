@@ -333,17 +333,17 @@ def linear(df, col, grd_srch=False):
 
     regr = LinearRegression()
     return regr, r2_score, True, mod
-    else:
-        mod = "Logistic"
-        lgr = LogisticRegression(random_state=0)
-        if not grd_srch:
-            return lgr, accuracy_score, False, mod
-        parameters = {
-            'penalty': ['l1', 'l2', 'elasticnet']
-        }
-        clf = GridSearchCV(lgr, parameters)
+#     else:
+#         mod = "Logistic"
+#         lgr = LogisticRegression(random_state=0)
+#         if not grd_srch:
+#             return lgr, accuracy_score, False, mod
+#         parameters = {
+#             'penalty': ['l1', 'l2', 'elasticnet']
+#         }
+#         clf = GridSearchCV(lgr, parameters)
         
-        return clf, accuracy_score, False, mod
+#         return clf, accuracy_score, False, mod
 
 def logistic(df, col, grd_srch=False):
     from sklearn.metrics import accuracy_score
