@@ -259,12 +259,12 @@ def impute_missing_values(df, missing_is):
 
         
         #### KNN ####
-        knn = KNNImputer(n_neighbors=5)
-        knn.fit(x_train, y_train_s)
-        y_pred_knn = knn.predict(x_test)
-        score = round(metric(y_test_s, y_pred_knn), 4)
-        knn_score = {"KNN": score}
-        score_dict.update(knn_score)
+#         knn = KNNImputer(n_neighbors=5)
+#         knn.fit(x_train, y_train_s)
+#         y_pred_knn = knn.predict(x_test)
+#         score = round(metric(y_test_s, y_pred_knn), 4)
+#         knn_score = {"KNN": score}
+#         score_dict.update(knn_score)
 
         imputation = None
         unwanted_cols = [key for key in dict_cols]
