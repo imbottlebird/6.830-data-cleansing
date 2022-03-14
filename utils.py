@@ -259,12 +259,12 @@ def impute_missing_values(df, missing_is):
 
         
         #### KNN ####
-        # knn = KNNImputer(n_neighbors=5)
-        # knn.fit(x_train, y_train_s)
-        # y_pred_knn = knn.predict(x_test)
-        # score = round(metric(y_test_s, y_pred_knn), 4)
-        # knn_score = {"KNN": score}
-        # score_dict.update(knn_score)
+        knn = KNNImputer(n_neighbors=5)
+        knn.fit(x_train, y_train_s)
+        y_pred_knn = knn.predict(x_test)
+        score = round(metric(y_test_s, y_pred_knn), 4)
+        knn_score = {"KNN": score}
+        score_dict.update(knn_score)
 
         imputation = None
         unwanted_cols = [key for key in dict_cols]
@@ -327,27 +327,27 @@ def impute_missing_values(df, missing_is):
     return df, my_dict, score_dict, time_dict
 
 
-# def linear(df, col, grd_srch=False):
-#     from sklearn.metrics import accuracy_score
-#     from sklearn.metrics import r2_score
+def linear(df, col, grd_srch=False):
+    from sklearn.metrics import accuracy_score
+    from sklearn.metrics import r2_score
 
-#     regr = LinearRegression()
-#     return regr, r2_score, True, mod
-#     else:
-#         mod = "Logistic"
-#         lgr = LogisticRegression(random_state=0)
-#         if not grd_srch:
-#             return lgr, accuracy_score, False, mod
-#         parameters = {
-#             'penalty': ['l1', 'l2', 'elasticnet']
-#         }
-#         clf = GridSearchCV(lgr, parameters)
+    regr = LinearRegression()
+    return regr, r2_score, True, mod
+    else:
+        mod = "Logistic"
+        lgr = LogisticRegression(random_state=0)
+        if not grd_srch:
+            return lgr, accuracy_score, False, mod
+        parameters = {
+            'penalty': ['l1', 'l2', 'elasticnet']
+        }
+        clf = GridSearchCV(lgr, parameters)
         
-#         return clf, accuracy_score, False, mod
+        return clf, accuracy_score, False, mod
 
-# def logistic(df, col, grd_srch=False):
-#     from sklearn.metrics import accuracy_score
-#     from sklearn.metrics import r2_score
+def logistic(df, col, grd_srch=False):
+    from sklearn.metrics import accuracy_score
+    from sklearn.metrics import r2_score
 
-#     lgr = LogisticRegression(random_state=0)
-#     return lrg, accuracy_score, False
+    lgr = LogisticRegression(random_state=0)
+    return lrg, accuracy_score, False
